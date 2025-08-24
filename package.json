@@ -1,4 +1,5 @@
 {
+  "homepage": "https://bluegrappler.github.io/Fitness-Tracker",
   "name": "fitness-tracker",
   "version": "1.0.0",
   "description": "A simple exercise tracker built with React and Firebase.",
