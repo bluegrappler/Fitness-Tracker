@@ -710,7 +710,6 @@ function FitnessTrackerApp({ db, auth, userId, appId, handleLogout }) {
 // --- Root App Component with Conditional Rendering ---
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [db, setDb] = useState(null);
   const [auth, setAuth] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -755,81 +754,11 @@ export default function App() {
     initApp();
   }, [initialAuthToken, firebaseConfigCanvas]);
 
-  // Handle a simulated login
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // In a real app, this would be a real authentication check.
-    // For this example, any submission is a "success."
-    setIsLoggedIn(true);
-    setMessage('');
-  };
-
   // Handle logout
   const handleLogout = () => {
     setIsLoggedIn(false);
     setMessage('You have been logged out.');
   };
-
-  // Conditional rendering based on login status
-  if (!isLoggedIn) {
-    // Show login form if not logged in
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4 font-sans">
-        <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl ring-1 ring-gray-200">
-          <h1 className="text-center text-3xl font-bold text-gray-800">Login</h1>
-
-          <form onSubmit={handleLogin} className="mt-8 space-y-4">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="email">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                className="w-full rounded-lg border border-gray-300 p-2 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="password">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                className="w-full rounded-lg border border-gray-300 p-2 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500"
-                required
-              />
-            </div>
-
-            {/* Display a message to the user */}
-            {message && (
-              <div className="text-sm font-medium text-red-600">
-                {message}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-indigo-600 py-2 text-lg font-semibold text-white transition-colors hover:bg-indigo-700"
-            >
-              Login
-            </button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-gray-500">
-            Don't have an account?{' '}
-            <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-              Sign Up
-            </a>
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // Show the main app if logged in and authentication is ready
   return (
