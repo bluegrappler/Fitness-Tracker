@@ -17,6 +17,8 @@ import {
   signInWithCustomToken,
   signInAnonymously,
   onAuthStateChanged,
+  EmailAuthProvider,
+  linkWithCredential,
 } from 'firebase/auth';
 
 // Define the Firebase config to be used as a fallback if not provided by the environment.
@@ -27,7 +29,7 @@ const fallbackFirebaseConfig = {
   storageBucket: "fitness-tracker-ff53e.firebasestorage.app",
   messagingSenderId: "608373111852",
   appId: "1:608373111852:web:af0dfb9dcc685947c2a589"
-};
+}
 
 // --- Helper Functions (Provided by User) ---
 
@@ -393,153 +395,189 @@ function FitnessTrackerApp({ db, auth, userId, appId, handleLogout }) {
     </div>
   );
 
-  const renderSetupPage = () => (
-    <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">Setup a New Exercise</h2>
-      {message && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-center text-sm sm:text-base" role="alert">
-          {message}
-        </div>
-      )}
-      <form onSubmit={handleAddSchedule} className="bg-white p-4 sm:p-8 rounded-xl shadow-md space-y-4 sm:space-y-6">
-        <div>
-          <label htmlFor="name" className="block text-gray-700 font-semibold">Exercise Name</label>
-          <input
-            id="name"
-            type="text"
-            value={exerciseName}
-            onChange={(e) => setExerciseName(e.target.value)}
-            required
-            className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-          />
-        </div>
+const renderSetupPage = () => (
+  <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
+    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">Setup a New Exercise</h2>
+    {message && (
+      <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-center text-sm sm:text-base" role="alert">
+        {message}
+      </div>
+    )}
+    <form onSubmit={handleAddSchedule} className="bg-white p-4 sm:p-8 rounded-xl shadow-md space-y-4 sm:space-y-6">
+      <div>
+        <label htmlFor="name" className="block text-gray-700 font-semibold">Exercise Name</label>
+        <input
+          id="name"
+          type="text"
+          value={exerciseName}
+          onChange={(e) => setExerciseName(e.target.value)}
+          required
+          className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+        />
+      </div>
 
-        <div className="space-y-4 p-4 border border-gray-300 rounded-lg">
-          <h3 className="text-lg font-semibold text-gray-800">Progressive Schedule</h3>
-          {progressiveSchedule.map((phase, index) => (
-            <div key={index} className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 items-end">
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm">Phase {index + 1} Duration (weeks)</label>
-                <input
-                  type="number"
-                  name="weeks"
-                  value={phase.weeks}
-                  onChange={(e) => handleScheduleChange(index, e)}
-                  required
-                  className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm">Sets</label>
-                <input
-                  type="number"
-                  name="sets"
-                  value={phase.sets}
-                  onChange={(e) => handleScheduleChange(index, e)}
-                  required
-                  className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm">Reps</label>
-                <input
-                  type="number"
-                  name="reps"
-                  value={phase.reps}
-                  onChange={(e) => handleScheduleChange(index, e)}
-                  required
-                  className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-                />
-              </div>
-              {progressiveSchedule.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => handleRemovePhase(index)}
-                  className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-150"
-                >
-                  Remove
-                </button>
-              )}
+      <div className="space-y-4 p-4 border border-gray-300 rounded-lg">
+        <h3 className="text-lg font-semibold text-gray-800">Progressive Schedule</h3>
+        {progressiveSchedule.map((phase, index) => (
+          <div key={index} className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 items-end">
+            <div className="flex-1">
+              <label className="block text-gray-700 text-sm">Phase {index + 1} Duration (weeks)</label>
+              <input
+                type="number"
+                name="weeks"
+                value={phase.weeks}
+                onChange={(e) => handleScheduleChange(index, e)}
+                required
+                className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              />
             </div>
-          ))}
-          <button
-            type="button"
-            onClick={handleAddPhase}
-            className="w-full sm:w-auto mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-150"
-          >
-            Add Phase
-          </button>
-        </div>
+            <div className="flex-1">
+              <label className="block text-gray-700 text-sm">Sets</label>
+              <input
+                type="number"
+                name="sets"
+                value={phase.sets}
+                onChange={(e) => handleScheduleChange(index, e)}
+                required
+                className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-gray-700 text-sm">Reps</label>
+              <input
+                type="number"
+                name="reps"
+                value={phase.reps}
+                onChange={(e) => handleScheduleChange(index, e)}
+                required
+                className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              />
+            </div>
+            {progressiveSchedule.length > 1 && (
+              <button
+                type="button"
+                onClick={() => handleRemovePhase(index)}
+                className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-150"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={handleAddPhase}
+          className="w-full sm:w-auto mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-150"
+        >
+          Add Phase
+        </button>
+      </div>
 
+      <div>
+        <label htmlFor="rest" className="block text-gray-700 font-semibold">Rest Time (e.g., 60-90s)</label>
+        <input
+          id="rest"
+          type="text"
+          value={rest}
+          onChange={(e) => setRest(e.target.value)}
+          required
+          className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+        />
+      </div>
+      <div>
+        <label htmlFor="frequency" className="block text-gray-700 font-semibold">Frequency (times per cycle)</label>
+        <input
+          id="frequency"
+          type="number"
+          value={frequency}
+          onChange={(e) => setFrequency(e.target.value)}
+          required
+          className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+        />
+      </div>
+      <div>
+        <label htmlFor="restBetween" className="block text-gray-700 font-semibold">Rest Days Between Sessions</label>
+        <input
+          id="restBetween"
+          type="number"
+          value={restBetween}
+          onChange={(e) => setRestBetween(e.target.value)}
+          required
+          className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+        />
+      </div>
+      <div>
+        <label htmlFor="restBeforeNext" className="block text-gray-700 font-semibold">Rest Days Before Next Round</label>
+        <input
+          id="restBeforeNext"
+          type="number"
+          value={restBeforeNext}
+          onChange={(e) => setRestBeforeNext(e.target.value)}
+          required
+          className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+        />
+      </div>
+      <div>
+        <label htmlFor="staggerDays" className="block text-gray-700 font-semibold">Stagger Start Day (0 = first day of cycle)</label>
+        <input
+          id="staggerDays"
+          type="number"
+          value={staggerDays}
+          onChange={(e) => setStaggerDays(e.target.value)}
+          required
+          className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className={`w-full font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 transition duration-150 ease-in-out shadow-md
+          ${!isLoading
+            ? 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-300'
+            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
+      >
+        {isLoading ? 'Saving...' : 'Save Schedule'}
+      </button>
+    </form>
+    
+    {/* --- NEW CODE TO ADD --- */}
+    <div className="bg-white p-4 sm:p-8 rounded-xl shadow-md space-y-4 sm:space-y-6 mt-8">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">Create a Permanent Account</h2>
+      <p className="text-center text-gray-600">
+        To save your data across devices, link your account with an email and password.
+      </p>
+      <form onSubmit={handleLinkAccount} className="space-y-4">
         <div>
-          <label htmlFor="rest" className="block text-gray-700 font-semibold">Rest Time (e.g., 60-90s)</label>
+          <label htmlFor="link-email" className="block text-gray-700 font-semibold">Email</label>
           <input
-            id="rest"
-            type="text"
-            value={rest}
-            onChange={(e) => setRest(e.target.value)}
+            id="link-email"
+            type="email"
+            placeholder="your-email@example.com"
             required
             className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
           />
         </div>
         <div>
-          <label htmlFor="frequency" className="block text-gray-700 font-semibold">Frequency (times per cycle)</label>
+          <label htmlFor="link-password" className="block text-gray-700 font-semibold">Password</label>
           <input
-            id="frequency"
-            type="number"
-            value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
-            required
-            className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-          />
-        </div>
-        <div>
-          <label htmlFor="restBetween" className="block text-gray-700 font-semibold">Rest Days Between Sessions</label>
-          <input
-            id="restBetween"
-            type="number"
-            value={restBetween}
-            onChange={(e) => setRestBetween(e.target.value)}
-            required
-            className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-          />
-        </div>
-        <div>
-          <label htmlFor="restBeforeNext" className="block text-gray-700 font-semibold">Rest Days Before Next Round</label>
-          <input
-            id="restBeforeNext"
-            type="number"
-            value={restBeforeNext}
-            onChange={(e) => setRestBeforeNext(e.target.value)}
-            required
-            className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-          />
-        </div>
-        <div>
-          <label htmlFor="staggerDays" className="block text-gray-700 font-semibold">Stagger Start Day (0 = first day of cycle)</label>
-          <input
-            id="staggerDays"
-            type="number"
-            value={staggerDays}
-            onChange={(e) => setStaggerDays(e.target.value)}
+            id="link-password"
+            type="password"
+            placeholder="••••••••"
             required
             className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
           />
         </div>
         <button
           type="submit"
-          disabled={isLoading}
-          className={`w-full font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 transition duration-150 ease-in-out shadow-md
-            ${!isLoading
-              ? 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-300'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
+          className="w-full font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 transition duration-150 ease-in-out shadow-md bg-green-600 hover:bg-green-700 text-white focus:ring-green-300"
         >
-          {isLoading ? 'Saving...' : 'Save Schedule'}
+          Link Account
         </button>
       </form>
     </div>
-  );
+  </div>
+);
 
   const renderCalendarPage = () => {
     const calendarData = getCalendarData(exercises, history, currentMonth, currentYear);
