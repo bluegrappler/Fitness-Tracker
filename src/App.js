@@ -723,36 +723,40 @@ export default function App() {
 
   // Firebase Initialization and Authentication
   useEffect(() => {
-    const initApp = async () => {
-      try {
-        const app = initializeApp(firebaseConfigCanvas);
-        const firestoreDb = getFirestore(app);
-        const firestoreAuth = getAuth(app);
-        setDb(firestoreDb);
-        setAuth(firestoreAuth);
+  const initApp = async () => {
+    try {
+      console.log("Firebase init started.");
+      const app = initializeApp(firebaseConfigCanvas);
+      const firestoreDb = getFirestore(app);
+      const firestoreAuth = getAuth(app);
+      setDb(firestoreDb);
+      setAuth(firestoreAuth);
 
-        // Explicitly sign in immediately on app load
-        if (initialAuthToken) {
-          await signInWithCustomToken(firestoreAuth, initialAuthToken);
-        } else {
-          await signInAnonymously(firestoreAuth);
-        }
-
-        // Use the onAuthStateChanged listener to set the user ID and readiness state.
-        const unsubscribe = onAuthStateChanged(firestoreAuth, (user) => {
-          if (user) {
-            setUserId(user.uid);
-            setIsAuthReady(true);
-          }
-        });
-        return () => unsubscribe();
-
-      } catch (e) {
-        console.error('Error initializing Firebase:', e);
+      console.log("Firebase services initialized. Attempting sign-in...");
+      if (initialAuthToken) {
+        await signInWithCustomToken(firestoreAuth, initialAuthToken);
+      } else {
+        await signInAnonymously(firestoreAuth);
       }
-    };
-    initApp();
-  }, [initialAuthToken, firebaseConfigCanvas]);
+      console.log("Sign-in function called. Waiting for auth state change...");
+
+      const unsubscribe = onAuthStateChanged(firestoreAuth, (user) => {
+        console.log("Auth state changed. User is:", user);
+        if (user) {
+          setUserId(user.uid);
+          setIsAuthReady(true);
+          console.log("User authenticated. UI should now load.");
+        } else {
+          console.log("Auth state changed, but user is not signed in.");
+        }
+      });
+      return () => unsubscribe();
+    } catch (e) {
+      console.error('Error initializing Firebase:', e);
+    }
+  };
+  initApp();
+}, [initialAuthToken, firebaseConfigCanvas]);
 
   // Handle logout
   const handleLogout = () => {
