@@ -266,16 +266,31 @@ function FitnessTrackerApp({ db, auth, userId, appId, handleLogout }) {
 // 👇 PASTE THE NEW FUNCTION HERE 👇
 const handleLinkAccount = async (e) => {
   e.preventDefault();
-  // Get input values using the name attribute
+  
   const email = e.target.email.value;
   const password = e.target.password.value;
   const user = auth.currentUser;
 
+  // Add these lines to check the values
+  console.log("Current User:", user);
+  console.log("Email:", email);
+  console.log("Password:", password);
+
+  // Check if the user object exists
+  if (!user) {
+    setMessage("No authenticated user found. Please try logging in again.");
+    console.log("User object is null. Cannot link account.");
+    return;
+  }
+  
   try {
     const credential = EmailAuthProvider.credential(email, password);
+    console.log("Credential created:", credential); // Check if credential is created
+    
     await linkWithCredential(user, credential);
     setMessage("Account successfully linked!");
     console.log("Account successfully linked!");
+    
   } catch (error) {
     console.error("Error linking account:", error);
     setMessage("Error linking account: " + error.message);
