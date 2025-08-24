@@ -266,8 +266,9 @@ function FitnessTrackerApp({ db, auth, userId, appId, handleLogout }) {
 // 👇 PASTE THE NEW FUNCTION HERE 👇
 const handleLinkAccount = async (e) => {
   e.preventDefault();
-  const email = e.target.email.value;
-  const password = e.target.password.value;
+  // Get input values using their IDs
+  const email = e.target.querySelector('#link-email').value;
+  const password = e.target.querySelector('#link-password').value;
   const user = auth.currentUser;
 
   try {
@@ -275,6 +276,7 @@ const handleLinkAccount = async (e) => {
     await linkWithCredential(user, credential);
     setMessage("Account successfully linked!");
     console.log("Account successfully linked!");
+    // You can also add a state update here to hide the form
   } catch (error) {
     console.error("Error linking account:", error);
     setMessage("Error linking account: " + error.message);
