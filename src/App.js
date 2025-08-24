@@ -263,6 +263,24 @@ function FitnessTrackerApp({ db, auth, userId, appId, handleLogout }) {
     }
   };
 
+// 👇 PASTE THE NEW FUNCTION HERE 👇
+const handleLinkAccount = async (e) => {
+  e.preventDefault();
+  const email = e.target.email.value;
+  const password = e.target.password.value;
+  const user = auth.currentUser;
+
+  try {
+    const credential = EmailAuthProvider.credential(email, password);
+    await linkWithCredential(user, credential);
+    setMessage("Account successfully linked!");
+    console.log("Account successfully linked!");
+  } catch (error) {
+    console.error("Error linking account:", error);
+    setMessage("Error linking account: " + error.message);
+  }
+};
+
   // Check if today is a workout day
   const isTodayAWorkoutDay = (exercise) => {
     if (!exercise) return false;
