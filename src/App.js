@@ -266,9 +266,9 @@ function FitnessTrackerApp({ db, auth, userId, appId, handleLogout }) {
 // 👇 PASTE THE NEW FUNCTION HERE 👇
 const handleLinkAccount = async (e) => {
   e.preventDefault();
-  // Get input values using their IDs
-  const email = e.target.querySelector('#link-email').value;
-  const password = e.target.querySelector('#link-password').value;
+  // Get input values using the name attribute
+  const email = e.target.email.value;
+  const password = e.target.password.value;
   const user = auth.currentUser;
 
   try {
@@ -276,7 +276,6 @@ const handleLinkAccount = async (e) => {
     await linkWithCredential(user, credential);
     setMessage("Account successfully linked!");
     console.log("Account successfully linked!");
-    // You can also add a state update here to hide the form
   } catch (error) {
     console.error("Error linking account:", error);
     setMessage("Error linking account: " + error.message);
@@ -572,33 +571,37 @@ const renderAccountPage = () => {
           To save your data across devices, link your account with an email and password.
         </p>
         <form onSubmit={handleLinkAccount} className="space-y-4">
-          <div>
-            <label htmlFor="link-email" className="block text-gray-700 font-semibold">Email</label>
-            <input
-              id="link-email"
-              type="email"
-              placeholder="your-email@example.com"
-              required
-              className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-            />
-          </div>
-          <div>
-            <label htmlFor="link-password" className="block text-gray-700 font-semibold">Password</label>
-            <input
-              id="link-password"
-              type="password"
-              placeholder="••••••••"
-              required
-              className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 transition duration-150 ease-in-out shadow-md bg-green-600 hover:bg-green-700 text-white focus:ring-green-300"
-          >
-            Link Account
-          </button>
-        </form>
+  <div>
+    <label htmlFor="link-email" className="block text-gray-700 font-semibold">Email</label>
+    <input
+      id="link-email"
+      type="email"
+      // Add the name attribute here
+      name="email"
+      placeholder="your-email@example.com"
+      required
+      className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+    />
+  </div>
+  <div>
+    <label htmlFor="link-password" className="block text-gray-700 font-semibold">Password</label>
+    <input
+      id="link-password"
+      type="password"
+      // Add the name attribute here
+      name="password"
+      placeholder="••••••••"
+      required
+      className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+    />
+  </div>
+  <button
+    type="submit"
+    className="w-full font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 transition duration-150 ease-in-out shadow-md bg-green-600 hover:bg-green-700 text-white focus:ring-green-300"
+  >
+    Link Account
+  </button>
+</form>
       </div>
     </div>
   );
