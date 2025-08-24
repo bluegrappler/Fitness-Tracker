@@ -540,44 +540,49 @@ const renderSetupPage = () => (
         {isLoading ? 'Saving...' : 'Save Schedule'}
       </button>
     </form>
-    
-    {/* --- NEW CODE TO ADD --- */}
-    <div className="bg-white p-4 sm:p-8 rounded-xl shadow-md space-y-4 sm:space-y-6 mt-8">
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">Create a Permanent Account</h2>
-      <p className="text-center text-gray-600">
-        To save your data across devices, link your account with an email and password.
-      </p>
-      <form onSubmit={handleLinkAccount} className="space-y-4">
-        <div>
-          <label htmlFor="link-email" className="block text-gray-700 font-semibold">Email</label>
-          <input
-            id="link-email"
-            type="email"
-            placeholder="your-email@example.com"
-            required
-            className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-          />
-        </div>
-        <div>
-          <label htmlFor="link-password" className="block text-gray-700 font-semibold">Password</label>
-          <input
-            id="link-password"
-            type="password"
-            placeholder="••••••••"
-            required
-            className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 transition duration-150 ease-in-out shadow-md bg-green-600 hover:bg-green-700 text-white focus:ring-green-300"
-        >
-          Link Account
-        </button>
-      </form>
-    </div>
   </div>
 );
+
+const renderAccountPage = () => {
+  return (
+    <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
+      <div className="bg-white p-4 sm:p-8 rounded-xl shadow-md space-y-4 sm:space-y-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">Create a Permanent Account</h2>
+        <p className="text-center text-gray-600">
+          To save your data across devices, link your account with an email and password.
+        </p>
+        <form onSubmit={handleLinkAccount} className="space-y-4">
+          <div>
+            <label htmlFor="link-email" className="block text-gray-700 font-semibold">Email</label>
+            <input
+              id="link-email"
+              type="email"
+              placeholder="your-email@example.com"
+              required
+              className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+            />
+          </div>
+          <div>
+            <label htmlFor="link-password" className="block text-gray-700 font-semibold">Password</label>
+            <input
+              id="link-password"
+              type="password"
+              placeholder="••••••••"
+              required
+              className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 transition duration-150 ease-in-out shadow-md bg-green-600 hover:bg-green-700 text-white focus:ring-green-300"
+          >
+            Link Account
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
   const renderCalendarPage = () => {
     const calendarData = getCalendarData(exercises, history, currentMonth, currentYear);
@@ -682,38 +687,45 @@ const renderSetupPage = () => (
     <div className="min-h-screen bg-gray-100 font-sans flex flex-col items-center">
       <div className="w-full max-w-4xl p-2 sm:p-4">
         {/* Navigation Bar */}
-        <nav className="bg-white rounded-2xl shadow-lg p-2 flex justify-around mb-4 sm:mb-8">
-          <button
-            onClick={() => setCurrentPage('today')}
-            className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'today' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
-          >
-            Today
-          </button>
-          <button
-            onClick={() => setCurrentPage('history')}
-            className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'history' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
-          >
-            History
-          </button>
-          <button
-            onClick={() => setCurrentPage('calendar')}
-            className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'calendar' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
-          >
-            Calendar
-          </button>
-          <button
-            onClick={() => setCurrentPage('setup')}
-            className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'setup' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
-          >
-            Setup
-          </button>
-          <button
-            onClick={handleLogout}
-            className="flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 text-red-600 hover:bg-gray-200"
-          >
-            Log Out
-          </button>
-        </nav>
+<nav className="bg-white rounded-2xl shadow-lg p-2 flex justify-around mb-4 sm:mb-8">
+  <button
+    onClick={() => setCurrentPage('today')}
+    className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'today' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
+  >
+    Today
+  </button>
+  <button
+    onClick={() => setCurrentPage('history')}
+    className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'history' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
+  >
+    History
+  </button>
+  <button
+    onClick={() => setCurrentPage('calendar')}
+    className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'calendar' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
+  >
+    Calendar
+  </button>
+  <button
+    onClick={() => setCurrentPage('setup')}
+    className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'setup' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
+  >
+    Setup
+  </button>
+  {/* 👇 NEW BUTTON ADDED HERE 👇 */}
+  <button
+    onClick={() => setCurrentPage('account')}
+    className={`flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 ${currentPage === 'account' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}
+  >
+    Account
+  </button>
+  <button
+    onClick={handleLogout}
+    className="flex-1 text-center py-2 px-1 sm:px-4 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 text-red-600 hover:bg-gray-200"
+  >
+    Log Out
+  </button>
+</nav>
 
         {/* Display User ID for debugging/collaboration */}
         {userId && (
@@ -723,22 +735,25 @@ const renderSetupPage = () => (
         )}
 
         {/* Main Content Area */}
-        <main className="w-full">
-          {(() => {
-            switch (currentPage) {
-              case 'today':
-                return renderTodayPage();
-              case 'history':
-                return renderHistoryPage();
-              case 'calendar':
-                return renderCalendarPage();
-              case 'setup':
-                return renderSetupPage();
-              default:
-                return null;
-            }
-          })()}
-        </main>
+<main className="w-full">
+  {(() => {
+    switch (currentPage) {
+      case 'today':
+        return renderTodayPage();
+      case 'history':
+        return renderHistoryPage();
+      case 'calendar':
+        return renderCalendarPage();
+      case 'setup':
+        return renderSetupPage();
+      // This is the new case you should add
+      case 'account':
+        return renderAccountPage();
+      default:
+        return null;
+    }
+  })()}
+</main>
       </div>
     </div>
   );
